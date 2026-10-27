@@ -2,7 +2,7 @@
 # Free Edition is serverless-only, so no cluster is defined. If bundle deploy gives you trouble,
 # create the same 4-task job in the Workflows UI and point each task at the notebooks.
 bundle:
-  name: gharchive_lakehouse
+  name: repopulse
 
 targets:
   dev:

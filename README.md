@@ -1,8 +1,7 @@
-# GH Archive Lakehouse
+# RepoPulse
 
-Incremental lakehouse on public GitHub event data (GH Archive): **AWS Lambda + S3** for ingestion,
-**Databricks** (Auto Loader, Delta Lake MERGE, Workflows) for processing, **Terraform** for infra,
-**GitHub Actions** for CI, and a Databricks dashboard on top.
+Incremental lakehouse pipeline for GitHub activity analytics, built on public GitHub event data (GH Archive): **AWS Lambda + S3** for ingestion,
+**Databricks** (Auto Loader, Delta Lake MERGE, Workflows) for processing, and a Databricks dashboard on top.
 
 ```
 GH Archive (hourly .json.gz)
@@ -41,8 +40,7 @@ Check the size of an hourly file before you start; start with 6 to 24 hours, not
    ```
 4. **Run the job:** notebooks 01 → 04 (or `databricks bundle deploy && databricks bundle run gh_lakehouse_pipeline`).
    Run it twice: the second run should add 0 rows (this proves incremental loading and idempotent MERGE).
-5. **Automate ingestion:** `cd infra/terraform && terraform apply` (needs `raw_bucket_name`, `databricks_host`,
-   `databricks_token`). EventBridge then triggers the Lambda every hour.
+5. **Automate ingestion:** follow `docs/aws_setup.md` (S3, SSM, IAM, Lambda, EventBridge in the AWS console).
 6. **Dashboard:** create an AI/BI dashboard from the queries in `sql/dashboard_queries.sql`.
 
 ## Design decisions
@@ -65,6 +63,6 @@ Check the size of an hourly file before you start; start with 6 to 24 hours, not
 
 ## Known limits
 - Free Edition is for non-commercial use and has daily compute quotas.
-- Terraform, the bundle file and the notebooks were not run against a live account by the author of this
+- The bundle file and the notebooks were not run against a live account by the author of this
   scaffold; transforms and ingestion helpers are unit-tested.
 - The Databricks token sits in SSM Parameter Store; for production use a service principal / Secrets Manager.
