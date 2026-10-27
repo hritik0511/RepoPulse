@@ -1,0 +1,7 @@
+__pycache__/
+.pytest_cache/
+.terraform/
+*.tfstate*
+*.tfvars
+lambda.zip
+.env

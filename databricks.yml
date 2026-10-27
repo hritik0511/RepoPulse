@@ -1,0 +1,32 @@
+# Databricks Asset Bundle. Deploy with:  databricks bundle deploy && databricks bundle run gh_lakehouse_pipeline
+# Free Edition is serverless-only, so no cluster is defined. If bundle deploy gives you trouble,
+# create the same 4-task job in the Workflows UI and point each task at the notebooks.
+bundle:
+  name: gharchive_lakehouse
+
+targets:
+  dev:
+    default: true
+    workspace:
+      host: https://REPLACE-ME.cloud.databricks.com
+
+resources:
+  jobs:
+    gh_lakehouse_pipeline:
+      name: gh_lakehouse_pipeline
+      tasks:
+        - task_key: bronze
+          notebook_task:
+            notebook_path: ./notebooks/01_bronze_autoloader.py
+        - task_key: silver
+          depends_on: [{ task_key: bronze }]
+          notebook_task:
+            notebook_path: ./notebooks/02_silver_merge.py
+        - task_key: gold
+          depends_on: [{ task_key: silver }]
+          notebook_task:
+            notebook_path: ./notebooks/03_gold_aggregates.py
+        - task_key: quality_gate
+          depends_on: [{ task_key: gold }]
+          notebook_task:
+            notebook_path: ./notebooks/04_quality_gate.py
